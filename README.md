@@ -6,6 +6,7 @@
 
 # Sophisticated models:
 
+- XGBoost model
 - k-nearest neighbors
 - linear classifier for each data input, ensemble them
 - neural network
