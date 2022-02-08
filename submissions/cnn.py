@@ -194,6 +194,7 @@ len_val = len_full - len_train
 for p in range(6):
     dropout_rate = p / 10
     print(f"DROPOUT RATE: {dropout_rate}")
+    auc_folds = []
     for fold_num, (train_indices, val_indices) in enumerate(kfold.split(ds_train)):
         print(f"FOLD {fold_num}")
         model = nn.Sequential(
@@ -294,12 +295,16 @@ for p in range(6):
                     val_loss += loss.item()
                 preds = output.cpu().detach().numpy()
                 ground_truths = labels.cpu().detach().numpy()
-                print(f'\tAUC: {sklearn.metrics.roc_auc_score(ground_truths, preds)}')
+                auc_score = sklearn.metrics.roc_auc_score(ground_truths, preds)
+                if epoch == n_epochs - 1:
+                    auc_folds.append(auc_score)
+                print(f'\tAUC: {auc_score}')
                 val_loss /= len(val_loader)
                 print(f"\tvalidation loss: {val_loss}")
                 val_loss_hist.append(val_loss)
         train_loss_hist_folds.append(train_loss_hist)
         val_loss_hist_folds.append(val_loss_hist)
+    print(f'AVERAGE AUC SCORE FOR DROPOUT P={p}: {sum(auc_folds)/len(auc_folds)}')
 
 
 # key questions: 
